@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/submit", upload.array("file"), (req, res) => {
-  console.log(req.body.file)
+  console.log(req.body)
   res.json({ message: "files uploaded successfully" });
 });
 
