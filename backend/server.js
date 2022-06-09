@@ -7,7 +7,7 @@ const app = express();
 
 const port = 5000;
 
-app.use(cors)
+app.use(cors())
 app.use(express.urlencoded({ extended: false }));
 
 const storage = multer.diskStorage({
@@ -27,7 +27,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/submit", upload.array("file"), (req, res) => {
-  console.log(req);
   res.json({ message: "files uploaded successfully" });
 });
 

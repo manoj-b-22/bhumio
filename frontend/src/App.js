@@ -54,7 +54,7 @@ function App({ login }) {
       }
     })
     .then((res) => {
-      console.log("Posted Files");
+      console.log(res.message);
     })
     .catch((err) => {
       console.log(err);
