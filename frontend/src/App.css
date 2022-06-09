@@ -1,0 +1,28 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.main_container {
+  margin-top: 60px;
+  width: 40vw;
+}
+
+.heading {
+  margin-bottom: 0em;
+}
+
+.selected {
+  border: 2px solid black;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.file {
+  width: 100%;
+}
