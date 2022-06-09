@@ -43,23 +43,22 @@ function App({ login }) {
   const upload = () => {
     let formData = new FormData()
     for (let i = 0 ; i < files.length ; i++) {
-      formData.append("file", files[i])
+      formData.append('file',files);
     }
-    console.log(formData);
     axios({
-        method: "POST",
-        url: "http://localhost:5000/submit",
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      })
-      .then((res) => {
-        console.log("Posted Files");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      method: "POST",
+      url: "http://localhost:5000/submit",
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    })
+    .then((res) => {
+      console.log("Posted Files");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   };
 
   const fileUpload = (e)=>{
