@@ -54,7 +54,7 @@ function App({ login }) {
       }
     })
     .then((res) => {
-      console.log(res.message);
+      console.log(res.data.message);
     })
     .catch((err) => {
       console.log(err);
@@ -63,8 +63,10 @@ function App({ login }) {
 
   const fileUpload = (e)=>{
     let uploaded = e.target.files[0];
-    if(uploaded !== undefined) setFiles(prevFiles=>[...prevFiles,uploaded])
-    console.log(`${uploaded.name} file uploaded to browser`);
+    if(uploaded !== undefined){
+      setFiles(prevFiles=>[...prevFiles,uploaded])
+      console.log(`${uploaded.name} file uploaded to browser`);
+    }
   }
 
   const selectFile = (id)=>{
