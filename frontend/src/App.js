@@ -74,7 +74,7 @@ function App({ login }) {
 
   const drivePicker = ()=>{
     openPicker({
-      clientId: '385339889149-i2g3ln01jnjaag93c337ci4ppago1fkp.apps.googleusercontent.com',
+      clientId: process.env.REACT_APP_CLIENT_ID,
       developerKey: process.env.REACT_APP_API_KEY,
       showUploadView: true,
       showUploadFolders: true,
