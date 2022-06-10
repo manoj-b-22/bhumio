@@ -17,7 +17,7 @@ function App({ login }) {
   const [deleteFile, setDeleteFile] = React.useState([]);
   const fileRef = React.createRef();
 
-  const [openPicker,authReponse] = useDrivePicker();
+  const [openPicker] = useDrivePicker();
 
   const handleClick = (newPlacement) => (event) => {
     setAnchorEl(event.currentTarget);
@@ -75,7 +75,7 @@ function App({ login }) {
   const drivePicker = ()=>{
     openPicker({
       clientId: '385339889149-i2g3ln01jnjaag93c337ci4ppago1fkp.apps.googleusercontent.com',
-      developerKey: 'AIzaSyBEMrB0MY2WoTqsxj1sKbV17LDcHr4l80I',
+      developerKey: process.env.REACT_APP_API_KEY,
       showUploadView: true,
       showUploadFolders: true,
       viewId: 'DOCS',
