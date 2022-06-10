@@ -2,6 +2,7 @@ import "./App.css";
 import React from "react";
 import axios from 'axios';
 import { connect } from "react-redux";
+import useDrivePicker from 'react-google-drive-picker';
 import store from "./Component/store";
 import Button from "./Component/CustomButton";
 import Box from "@mui/material/Box";
@@ -15,6 +16,8 @@ function App({ login }) {
   const [files, setFiles] = React.useState([]);
   const [deleteFile, setDeleteFile] = React.useState([]);
   const fileRef = React.createRef();
+
+  const [openPicker,authReponse] = useDrivePicker();
 
   const handleClick = (newPlacement) => (event) => {
     setAnchorEl(event.currentTarget);
@@ -50,7 +53,7 @@ function App({ login }) {
       url: "http://localhost:5000/submit",
       data: formData,
       headers: {
-        "Content-Type": "multipart/form-data"
+        "content-type": "multipart/form-data"
       }
     })
     .then((res) => {
@@ -67,6 +70,26 @@ function App({ login }) {
       setFiles(prevFiles=>[...prevFiles,uploaded])
       console.log(`${uploaded.name} file uploaded to browser`);
     }
+  }
+
+  const drivePicker = ()=>{
+    openPicker({
+      clientId: '385339889149-i2g3ln01jnjaag93c337ci4ppago1fkp.apps.googleusercontent.com',
+      developerKey: 'AIzaSyBEMrB0MY2WoTqsxj1sKbV17LDcHr4l80I',
+      showUploadView: true,
+      showUploadFolders: true,
+      viewId: 'DOCS',
+      supportDrive: true,
+      callbackFunction: (data)=>{
+        if(data.action === 'cancel'){
+          console.log('Google Drive Picker closed');
+        }
+        if(data.action === 'picked'){
+          setFiles(prevFiles=>[...prevFiles,data.docs[0]])
+          console.log(`${data.docs[0].name} file is uploaded to browser`);
+        }
+      }
+    })
   }
 
   const selectFile = (id)=>{
@@ -96,7 +119,7 @@ function App({ login }) {
     <div className="App">
       <h1>BHUMIO INC</h1>
       <div className="main_container">
-        <input type='file' ref={fileRef} multiple onChange={fileUpload} />
+        <input type='file' name='file' ref={fileRef} multiple onChange={fileUpload} />
         <Box
           sx={{ width: "100%" }}
           display="flex"
@@ -127,6 +150,7 @@ function App({ login }) {
                     color={"primary"}
                     text={"Browse Google Drive"}
                     icon={"cloud"}
+                    onClickFunc={drivePicker}
                   />
                 </Box>
               </Fade>
