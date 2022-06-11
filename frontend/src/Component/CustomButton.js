@@ -20,7 +20,7 @@ function CustomButton(props) {
   return (
     <Button
       variant="outlined"
-      onClick={onClickFunc ? (e)=>onClickFunc(e) : null}
+      onClick={onClickFunc ? (e) => onClickFunc(e) : null}
       color={props.color}
       startIcon={icon}
     >
