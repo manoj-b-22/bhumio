@@ -103,7 +103,6 @@ function App({ login }) {
     openPicker({
       clientId: process.env.REACT_APP_CLIENT_ID,
       developerKey: process.env.REACT_APP_API_KEY,
-      showUploadView: true,
       showUploadFolders: true,
       token: gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token,
       viewId: "DOCS",
