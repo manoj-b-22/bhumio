@@ -9,6 +9,7 @@ import Button from "./Component/CustomButton";
 import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
 import Popper from "@mui/material/Popper";
+import { Alert } from "@mui/material";
 
 function App({ login }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -16,6 +17,7 @@ function App({ login }) {
   const [placement, setPlacement] = React.useState();
   const [files, setFiles] = React.useState([]);
   const [deleteFile, setDeleteFile] = React.useState([]);
+  const [message, setMessage] = React.useState("");
   const fileRef = React.createRef();
 
   const [openPicker] = useDrivePicker();
@@ -54,6 +56,7 @@ function App({ login }) {
           setTimeout(() => {
             console.log("Connected to Google Drive");
             store.dispatch({ type: "loginSuccess" });
+            setMessage("");
           }, 1000);
         });
     } else {
@@ -73,10 +76,9 @@ function App({ login }) {
   const upload = () => {
     let formData = new FormData();
     for (let i = 0; i < files.length; i++) {
-      if(files[i].url !== undefined){
-        formData.append("url",files[i].url)
-      }
-      else{
+      if (files[i].url !== undefined) {
+        formData.append("url", files[i].url);
+      } else {
         formData.append("file", files[i]);
       }
     }
@@ -92,7 +94,7 @@ function App({ login }) {
       .catch((err) => {
         console.log(err);
       });
-    setFiles([]);  
+    setFiles([]);
   };
 
   const fileUpload = (e) => {
@@ -104,24 +106,37 @@ function App({ login }) {
   };
 
   const drivePicker = () => {
-    openPicker({
-      clientId: process.env.REACT_APP_CLIENT_ID,
-      developerKey: process.env.REACT_APP_API_KEY,
-      showUploadFolders: true,
-      token: login? gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token : '',
-      viewId: "DOCS",
-      supportDrive: true,
-      callbackFunction: (data) => {
-        if (data.action === "cancel") {
-          console.log("Google Drive Picker closed");
-        }
-        if (data.action === "picked") {
-          setFiles((prevFiles) => [...prevFiles, data.docs[0]]);
-          console.log(`${data.docs[0].name} file is uploaded to browser`);
-          console.log(data.docs[0]);
-        }
-      },
-    });
+    if (!login) {
+      setMessage("Login Required In order to Browse Files from Drive");
+    } else {
+      openPicker({
+        clientId: process.env.REACT_APP_CLIENT_ID,
+        developerKey: process.env.REACT_APP_API_KEY,
+        showUploadFolders: true,
+        token: login
+          ? gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse()
+              .access_token
+          : "",
+        viewId: "DOCS",
+        supportDrive: true,
+        callbackFunction: (data) => {
+          if (data.action === "cancel") {
+            console.log("Google Drive Picker closed");
+          }
+          if (data.action === "picked") {
+            setFiles((prevFiles) => [...prevFiles, data.docs[0]]);
+            console.log(`${data.docs[0].name} file is uploaded to browser`);
+            console.log(data.docs[0])
+            gapi.client.drive.files.get({
+              fileId: data.docs[0].id,
+              alt:"media"
+            }).then((res)=>{
+              console.log(res);
+            })
+          }
+        },
+      });
+    }
   };
 
   const selectFile = (id) => {
@@ -142,8 +157,8 @@ function App({ login }) {
     if (deleteFile.length > 0) {
       setFiles(files.filter((f) => !deleteFile.includes(f.name)));
       console.log("Removed Selected Files");
-      for(let i=0; i<files.length;i++){
-        document.getElementById(i).style.backgroundColor = 'white';
+      for (let i = 0; i < files.length; i++) {
+        document.getElementById(i).style.backgroundColor = "white";
       }
     }
     setDeleteFile([]);
@@ -217,6 +232,7 @@ function App({ login }) {
             </div>
           ))}
         </div>
+        { message!=='' && <Alert sx={{width:"90%", marginBottom:'10px'}} color={'error'}>{message}</Alert>}
         <Box
           sx={{ width: "100%" }}
           display="flex"
