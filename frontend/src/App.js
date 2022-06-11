@@ -39,7 +39,7 @@ function App({ login }) {
         discoveryDocs: [
           "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
         ],
-        clientSecret: process.env.REACT_APP_CLIENT_SECRET
+        clientSecret: process.env.REACT_APP_CLIENT_SECRET,
       });
     }
     gapi.load("client:auth2", start);
@@ -73,22 +73,26 @@ function App({ login }) {
   const upload = () => {
     let formData = new FormData();
     for (let i = 0; i < files.length; i++) {
-      formData.append("file", files);
+      if(files[i].url !== undefined){
+        formData.append("url",files[i].url)
+      }
+      else{
+        formData.append("file", files[i]);
+      }
     }
-    axios({
-      method: "POST",
-      url: "http://localhost:5000/submit",
-      data: formData,
-      headers: {
-        "content-type": "multipart/form-data",
-      },
-    })
+    axios
+      .post("http://localhost:5000/submit", formData, {
+        headers: {
+          "content-type": "multipart/formdata",
+        },
+      })
       .then((res) => {
         console.log(res.data.message);
       })
       .catch((err) => {
         console.log(err);
       });
+    setFiles([]);  
   };
 
   const fileUpload = (e) => {
@@ -104,7 +108,7 @@ function App({ login }) {
       clientId: process.env.REACT_APP_CLIENT_ID,
       developerKey: process.env.REACT_APP_API_KEY,
       showUploadFolders: true,
-      token: gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token,
+      token: login? gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token : '',
       viewId: "DOCS",
       supportDrive: true,
       callbackFunction: (data) => {
@@ -114,6 +118,7 @@ function App({ login }) {
         if (data.action === "picked") {
           setFiles((prevFiles) => [...prevFiles, data.docs[0]]);
           console.log(`${data.docs[0].name} file is uploaded to browser`);
+          console.log(data.docs[0]);
         }
       },
     });
@@ -137,6 +142,9 @@ function App({ login }) {
     if (deleteFile.length > 0) {
       setFiles(files.filter((f) => !deleteFile.includes(f.name)));
       console.log("Removed Selected Files");
+      for(let i=0; i<files.length;i++){
+        document.getElementById(i).style.backgroundColor = 'white';
+      }
     }
     setDeleteFile([]);
   };

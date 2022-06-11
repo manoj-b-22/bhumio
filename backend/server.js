@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser");
 const multer = require("multer");
@@ -8,24 +9,35 @@ const app = express();
 
 const port = 5000;
 
+let folder = "./uploads";
+if (!fs.existsSync(folder)) {
+  fs.mkdirSync(folder);
+  console.log(`${folder} created successfully`);
+}
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const nameFile = (file) => {
+  const date = new Date(Date.now());
+  const name = file.originalname;
+  const ext = (name.match(/\.+[\S]+$/) || [])[0];
+
+  const filename =
+    name.slice(0, name.length - ext.length) +
+    "_" +
+    date.toISOString().replace(/:/g, "-") +
+    ext;
+
+  return filename;
+};
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(__dirname, "/uploads"));
   },
   filename: function (req, file, cb) {
-    const date = new Date(Date.now());
-    const name = file.originalname;
-    const ext = (name.match(/\.+[\S]+$/) || [])[0];
-    cb(
-      null,
-      name.slice(0, name.length - ext.length) +
-        "_" +
-        date.toISOString().replace(/:/g, "-") +
-        ext
-    );
+    cb(null, nameFile(file));
   },
 });
 
@@ -36,8 +48,8 @@ app.get("/", (req, res) => {
 });
 
 app.post("/submit", upload.array("file"), (req, res) => {
-  console.log(req.files);
-  console.log("saved to uploads folder");
+  console.log(`${req.files} files saved to uploads folder`);
+  console.log(req.body.url);
   res.json({ message: "files uploaded successfully" });
 });
 
