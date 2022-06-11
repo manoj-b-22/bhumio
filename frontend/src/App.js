@@ -39,6 +39,7 @@ function App({ login }) {
         discoveryDocs: [
           "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
         ],
+        clientSecret: process.env.REACT_APP_CLIENT_SECRET
       });
     }
     gapi.load("client:auth2", start);
@@ -104,6 +105,7 @@ function App({ login }) {
       developerKey: process.env.REACT_APP_API_KEY,
       showUploadView: true,
       showUploadFolders: true,
+      token: gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse().access_token,
       viewId: "DOCS",
       supportDrive: true,
       callbackFunction: (data) => {
