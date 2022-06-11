@@ -76,11 +76,7 @@ function App({ login }) {
   const upload = () => {
     let formData = new FormData();
     for (let i = 0; i < files.length; i++) {
-      if (files[i].url !== undefined) {
-        formData.append("url", files[i].url);
-      } else {
-        formData.append("file", files[i]);
-      }
+      formData.append("file", files[i]);
     }
     axios
       .post("http://localhost:5000/submit", formData, {
@@ -124,15 +120,18 @@ function App({ login }) {
             console.log("Google Drive Picker closed");
           }
           if (data.action === "picked") {
-            setFiles((prevFiles) => [...prevFiles, data.docs[0]]);
-            console.log(`${data.docs[0].name} file is uploaded to browser`);
-            console.log(data.docs[0])
-            gapi.client.drive.files.get({
-              fileId: data.docs[0].id,
-              alt:"media"
-            }).then((res)=>{
-              console.log(res);
-            })
+            gapi.client.drive.files
+              .get({
+                fileId: data.docs[0].id,
+                alt: "media",
+              })
+              .then((res) => {
+                const file = new File([res.body], data.docs[0].name, {
+                  type: data.docs[0].mimeType,
+                });
+                setFiles((prevFiles) => [...prevFiles, file]);
+                console.log(`${data.docs[0].name} file is uploaded to browser`);
+              });
           }
         },
       });
@@ -232,7 +231,11 @@ function App({ login }) {
             </div>
           ))}
         </div>
-        { message!=='' && <Alert sx={{width:"90%", marginBottom:'10px'}} color={'error'}>{message}</Alert>}
+        {message !== "" && (
+          <Alert sx={{ width: "90%", marginBottom: "10px" }} color={"error"}>
+            {message}
+          </Alert>
+        )}
         <Box
           sx={{ width: "100%" }}
           display="flex"

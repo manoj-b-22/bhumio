@@ -49,7 +49,6 @@ app.get("/", (req, res) => {
 
 app.post("/submit", upload.array("file"), (req, res) => {
   console.log(`${req.files} files saved to uploads folder`);
-  console.log(req.body.url);
   res.json({ message: "files uploaded successfully" });
 });
 
